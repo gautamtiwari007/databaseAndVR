@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Import the webpage's stylesheet -->
+    <link rel="stylesheet" href="/style.css" />
+    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+    <script src="https://unpkg.com/aframe-event-set-component@3.0.3/dist/aframe-event-set-component.min.js"></script>
+    <!-- Import the webpage's javascript file -->
+    <script src="/script.js" defer></script>
+  </head>
+  <body>
+    <div>
+      <a-scene>
+        <a-box
+          value="hello"
+          position="-1 0.5 -3"
+          rotation="0 45 0"
+          color="red"
+          animation="property: position; to: 1 8 -10; dur: 10000; easing: linear; loop: true"
+        ></a-box>
+        <a-box
+          id="box2"
+          position="-1 0.5 -3"
+          rotation="0 45 0"
+          color="#4CC3D9"
+          event-set__enter="_event: mouseenter; color: #8FF7FF"
+          event-set__leave="_event: mouseleave; color: #4CC3D9"
+        ></a-box>
+        <a-entity
+          rotation="0 0 0"
+          animation="property: rotation; to: 0 360 0; loop: true; dur: 1000"
+        >
+          <a-sphere
+            position="0 1.25 -5"
+            radius="1.25"
+            color="#EF2D5E"
+          ></a-sphere>
+        </a-entity>
+        <a-cylinder
+          position="1 0.75 -3"
+          radius="0.5"
+          value="Hai"
+          height="1.5"
+          color="#FFC65D"
+          event-set__enter="_event: mouseenter; _target: #cylinderText; visible: true"
+          event-set__leave="_event: mouseleave; _target: #cylinderText; visible: false"
+        >
+          <a-text
+            id="cylinderText"
+            value="This is a cylinder"
+            align="center"
+            color="#FFF"
+            visible="false"
+            position="0 -0.55 0.55"
+            geometry="primitive: plane; width: 1.75"
+            material="color: #333"
+          ></a-text>
+        </a-cylinder>
+        <a-plane
+          position="0 0 -4"
+          rotation="-90 0 0"
+          width="4"
+          height="4"
+          color="#7BC8A4"
+          event-set__enter="_event: mouseenter; material.wireframe: true"
+          event-set__leave="_event: mouseleave; material.wireframe: false"
+        ></a-plane>
+        <a-sky color="#ECECEC"></a-sky>
+        <a-entity
+          rotation="0 0 0"
+          animation="property: rotation; to: 0 360 0; loop: true; dur: 10000"
+        >
+          <a-sphere position="5 0 0" color="blue"></a-sphere>
+        </a-entity>
+        <a-camera>
+          <a-cursor></a-cursor>
+        </a-camera>
+      </a-scene>
+    </div>
+    <!-- The core Firebase JS SDK is always required and must be listed first -->
+    <script src="https://www.gstatic.com/firebasejs/8.6.7/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.7/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.7/firebase-database.js"></script>
+  </body>
+  <script id="MainScript">
+    var firebaseConfig = {
+      apiKey: "AIzaSyB2up9-H2w7OgbTJjubL7OUAK9uWjDOkJI",
+      authDomain: "ar-vr-12de3.firebaseapp.com",
+      projectId: "ar-vr-12de3",
+      storageBucket: "ar-vr-12de3.appspot.com",
+      messagingSenderId: "233235157468",
+      appId: "1:233235157468:web:62a38b06f5b83cc61dbf19",
+      measurementId: "G-2S0NRB26DN",
+    };
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+
+    var box = document.getElementById("box2");
+    var position = box.getAttribute("position");
+    console.log(position);
+
+    firebase.database().ref("measurment").set({
+      positionOfBox: position,
+    });
+
+    firebase
+      .database()
+      .ref("measurment")
+      .on("value", (snapshot) => {
+        position.x = snapshot.val().positionOfBox.x;
+        position.y = snapshot.val().positionOfBox.y;
+        position.z = snapshot.val().positionOfBox.z;
+      });
+  </script>
+</html>
